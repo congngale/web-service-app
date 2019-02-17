@@ -44,12 +44,12 @@ public class WebServiceApplication {
 
 	public static String connectionId;
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		SpringApplication.run(WebServiceApplication.class, args);
-		Socket socket = SocketFactory.getDefault().createSocket("localhost", 2019);
-		socket.getOutputStream().write("foo\r\n".getBytes());
-		socket.close();
-		Thread.sleep(1000);
+//		Socket socket = SocketFactory.getDefault().createSocket("localhost", 2019);
+//		socket.getOutputStream().write("foo\r\n".getBytes());
+//		socket.close();
+//		Thread.sleep(1000);
 	}
 
 	@Bean
