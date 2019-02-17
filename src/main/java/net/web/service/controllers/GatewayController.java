@@ -1,5 +1,6 @@
 package net.web.service.controllers;
 
+import net.web.service.WebServiceApplication;
 import net.web.service.models.Gateway;
 import net.web.service.repositories.GatewayRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -25,5 +25,10 @@ public class GatewayController {
     @RequestMapping(value = "/add", method = RequestMethod.PUT)
     public void add(Gateway gateway) {
         repository.insert(gateway);
+    }
+
+    @RequestMapping(value = "/threshold", method = RequestMethod.POST)
+    public void setThreshold(int threshold) {
+        WebServiceApplication.threshold = threshold;
     }
 }

@@ -3,6 +3,7 @@ package net.web.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.web.service.models.ClientData;
 import net.web.service.repositories.ClientDataRepository;
+import net.web.service.repositories.ClientRepository;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -19,16 +20,36 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 
+import javax.net.SocketFactory;
 import java.io.IOException;
+import java.net.Socket;
 
 @SpringBootApplication
 public class WebServiceApplication {
 
 	@Autowired
-	private ClientDataRepository repository;
+	private ClientRepository repository;
 
-	public static void main(String[] args) {
+	@Autowired
+	private ClientDataRepository dataRepository;
+
+	@Autowired
+	private ServerConfiguration.Gateway gateway;
+
+	private ObjectMapper mapper =  new ObjectMapper();
+
+	private boolean clientState = false;
+
+	public static int threshold;
+
+	public static String connectionId;
+
+	public static void main(String[] args) throws Exception {
 		SpringApplication.run(WebServiceApplication.class, args);
+		Socket socket = SocketFactory.getDefault().createSocket("localhost", 2019);
+		socket.getOutputStream().write("foo\r\n".getBytes());
+		socket.close();
+		Thread.sleep(1000);
 	}
 
 	@Bean
@@ -61,11 +82,30 @@ public class WebServiceApplication {
 			@Override
 			public void handleMessage(Message<?> message) throws MessagingException {
 				System.out.println(message.getPayload());
-
 				try {
-					ObjectMapper mapper =  new ObjectMapper();
+					//convert to client data
+					ClientData data = mapper.readValue(message.getPayload().toString(), ClientData.class);
 
-					repository.insert(mapper.readValue(message.getPayload().toString(), ClientData.class));
+					//save data
+					dataRepository.insert(data);
+
+					//check connection id
+					if (connectionId != null && !connectionId.isEmpty()) {
+						//check client
+						if (threshold < data.data && !clientState) {
+							//set state
+							clientState = true;
+
+							//take action
+							gateway.send("ON", connectionId);
+						} else if (clientState) {
+							//set state
+							clientState = false;
+
+							//take action
+							gateway.send("OFF", connectionId);
+						}
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

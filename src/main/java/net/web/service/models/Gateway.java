@@ -3,7 +3,7 @@ package net.web.service.models;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "gateways")
+@Document(collection = "gateway")
 public class Gateway {
     @Id
     private String id;
