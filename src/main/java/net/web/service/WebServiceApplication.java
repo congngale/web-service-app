@@ -22,6 +22,9 @@ import org.springframework.messaging.MessagingException;
 import java.io.IOException;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @SpringBootApplication
 public class WebServiceApplication {
 
@@ -39,8 +42,11 @@ public class WebServiceApplication {
 
 	public static String connectionId;
 
+	private static final Logger logger = LoggerFactory.getLogger(WebServiceApplication.class);
+
 	public static void main(String[] args) {
 		SpringApplication.run(WebServiceApplication.class, args);
+		logger.info("Start application");
 	}
 
 	@Bean
@@ -80,8 +86,8 @@ public class WebServiceApplication {
 					//save data
 					dataRepository.insert(data);
 
-					System.out.println("Current threshold = " + threshold);
-					System.out.println("Current client state = " + clientState);
+					logger.info("Current threshold = " + threshold);
+					logger.info("Current client state = " + clientState);
 
 					//check connection id
 					if (connectionId != null && !connectionId.isEmpty()) {
@@ -101,7 +107,7 @@ public class WebServiceApplication {
 						}
 					}
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.error(e.getMessage());
 				}
 			}
 		};

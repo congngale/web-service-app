@@ -1,5 +1,7 @@
 package net.web.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +26,8 @@ public class ServerConfiguration implements ApplicationListener<TcpConnectionEve
 
     private final int port = 2019;//SocketUtils.findAvailableServerSocket(5000);
 
+    private static final Logger logger = LoggerFactory.getLogger(WebServiceApplication.class);
+
     @MessagingGateway(defaultRequestChannel="toTcp")
     public interface ServerGateway {
         void send(@Payload String data, @Header(IpHeaders.CONNECTION_ID) String connectionId);
@@ -36,7 +40,6 @@ public class ServerConfiguration implements ApplicationListener<TcpConnectionEve
 
     @Bean
     public MessageChannel toTcp() {
-        System.out.println("creating toTcp DirectChannel");
         DirectChannel dc = new DirectChannel();
         dc.setBeanName("toTcp");
 
@@ -70,7 +73,7 @@ public class ServerConfiguration implements ApplicationListener<TcpConnectionEve
 
     @Override
     public void onApplicationEvent(TcpConnectionEvent event) {
-        System.out.println("Got TcpConnectionEvent: source =" + event.getSource() +
+        logger.info("Got TcpConnectionEvent: source =" + event.getSource() +
                 ", id =" + event.getConnectionId());
 
         WebServiceApplication.connectionId = event.getConnectionId();
