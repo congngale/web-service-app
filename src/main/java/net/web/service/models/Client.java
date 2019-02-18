@@ -24,4 +24,14 @@ public class Client {
         this.name = name;
         this.threshold = threshold;
     }
+    
+    @Override
+    public String toString() {
+        return "Client{" +
+                "id='" + id + '\'' +
+                ", ip='" + ip + '\'' +
+                ", name='" + name + '\'' +
+		", threshold=" + threshold + '\'' +
+                '}';
+    }
 }

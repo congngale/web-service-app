@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/gateway")
@@ -14,6 +16,8 @@ public class GatewayController {
 
     @Autowired
     private GatewayRepository repository;
+    
+    private static final Logger logger = LoggerFactory.getLogger(GatewayController.class);
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public List<Gateway> all() {
@@ -22,6 +26,7 @@ public class GatewayController {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public void add(@RequestBody Gateway gateway) {
+	logger.info("Add gateway = " + gateway.toString());
         //check exist
         if (repository.existsById(gateway.id)) {
             //update gateway

@@ -29,7 +29,7 @@ public class ServerConfiguration implements ApplicationListener<TcpConnectionEve
 
     private final int port = 2019;//SocketUtils.findAvailableServerSocket(5000);
 
-    private static final Logger logger = LoggerFactory.getLogger(WebServiceApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(ServerConfiguration.class);
 
     @MessagingGateway(defaultRequestChannel="toTcp")
     public interface ServerGateway {
