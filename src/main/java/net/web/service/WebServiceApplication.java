@@ -40,6 +40,8 @@ public class WebServiceApplication {
 
 	public static int threshold;
 
+	public static String clientId;
+
 	public static String connectionId;
 
 	private static final Logger logger = LoggerFactory.getLogger(WebServiceApplication.class);

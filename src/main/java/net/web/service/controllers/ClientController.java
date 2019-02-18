@@ -21,7 +21,7 @@ public class ClientController {
         return repository.findAll();
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.PUT)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     public void add(@RequestBody Client client) {
         //check exist
         if (repository.existsById(client.id)) {

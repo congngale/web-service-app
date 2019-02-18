@@ -20,7 +20,7 @@ public class GatewayController {
         return repository.findAll();
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.PUT)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     public void add(@RequestBody Gateway gateway) {
         //check exist
         if (repository.existsById(gateway.id)) {

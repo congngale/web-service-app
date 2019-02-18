@@ -1,5 +1,8 @@
 package net.web.service;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import net.web.service.models.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
@@ -85,14 +88,21 @@ public class ServerConfiguration implements ApplicationListener<TcpConnectionEve
 
         // Server
         @Transformer(inputChannel="fromTcp", outputChannel="handle")
-        public String input(byte[] bytes) {
-            return new String(bytes);
+        public Client input(byte[] bytes) throws Exception {
+            //convert to string
+            String input = new String(bytes);
+
+            logger.info("TCP server received data = " + input);
+
+            //convert to client
+            return new ObjectMapper().readValue(input, Client.class);
         }
 
         // Server
         @ServiceActivator(inputChannel="handle", outputChannel="toTcp")
-        public String output(String in) {
-            return in;
+        public void output(Client client) {
+            //set connected client
+            WebServiceApplication.clientId = client.id;
         }
     }
 }
