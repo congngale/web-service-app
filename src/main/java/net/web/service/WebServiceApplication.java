@@ -23,6 +23,7 @@ import org.springframework.messaging.MessagingException;
 import javax.net.SocketFactory;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.UUID;
 
 @SpringBootApplication
 public class WebServiceApplication {
@@ -64,9 +65,10 @@ public class WebServiceApplication {
 		options.setPassword("Fcz6bH0Q5XIL".toCharArray());
 		DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
 		factory.setConnectionOptions(options);
+
 		MqttPahoMessageDrivenChannelAdapter adapter =
 				new MqttPahoMessageDrivenChannelAdapter("tcp://m16.cloudmqtt.com:17245",
-						"web-service-app", factory, "net/gateway/#");
+						"web-service-app" + UUID.randomUUID().toString(), factory, "net/gateway/#");
 		adapter.setCompletionTimeout(60000);
 		adapter.setConverter(new DefaultPahoMessageConverter());
 		adapter.setQos(1);
