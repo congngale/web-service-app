@@ -49,6 +49,8 @@ public class WebServiceApplication {
 
 	private static final int OFF = 0;
 
+	private static final String SENDER = "web-service-app";
+
 	private static final Logger logger = LoggerFactory.getLogger(WebServiceApplication.class);
 
 	public static void main(String[] args) {
@@ -105,13 +107,13 @@ public class WebServiceApplication {
 							clientState = true;
 
 							//take action
-							gateway.send(mapper.writeValueAsString(new Action("Web Service App", ON)), connectionId);
+							gateway.send(mapper.writeValueAsString(new Action(SENDER, ON)), connectionId);
 						} else if (threshold > data.data && clientState) {
 							//set state
 							clientState = false;
 
 							//take action
-							gateway.send(mapper.writeValueAsString(new Action("Web Service App", OFF)), connectionId);
+							gateway.send(mapper.writeValueAsString(new Action(SENDER, OFF)), connectionId);
 						}
 					}
 				} catch (IOException e) {
