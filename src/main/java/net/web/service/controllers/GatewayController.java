@@ -19,7 +19,14 @@ public class GatewayController {
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public List<Gateway> all() {
-        return repository.findAll();
+        List<Gateway> gateways = repository.findAll();
+
+        //print debug
+        for (Gateway g : gateways) {
+            System.out.println(g.toString());
+        }
+
+        return gateways;
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.PUT)

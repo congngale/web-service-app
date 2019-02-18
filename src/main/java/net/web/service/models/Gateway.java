@@ -17,4 +17,13 @@ public class Gateway {
         this.ip = ip;
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "Gateway{" +
+                "id='" + id + '\'' +
+                ", ip='" + ip + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

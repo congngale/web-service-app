@@ -25,7 +25,7 @@ public class ServerConfiguration implements ApplicationListener<TcpConnectionEve
     private final int port = 2019;//SocketUtils.findAvailableServerSocket(5000);
 
     @MessagingGateway(defaultRequestChannel="toTcp")
-    public interface Gateway {
+    public interface ServerGateway {
         void send(@Payload String data, @Header(IpHeaders.CONNECTION_ID) String connectionId);
     }
 

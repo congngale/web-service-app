@@ -20,9 +20,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 
-import javax.net.SocketFactory;
 import java.io.IOException;
-import java.net.Socket;
 import java.util.UUID;
 
 @SpringBootApplication
@@ -35,7 +33,7 @@ public class WebServiceApplication {
 	private ClientDataRepository dataRepository;
 
 	@Autowired
-	private ServerConfiguration.Gateway gateway;
+	private ServerConfiguration.ServerGateway serverGateway;
 
 	private ObjectMapper mapper =  new ObjectMapper();
 
@@ -68,7 +66,7 @@ public class WebServiceApplication {
 
 		MqttPahoMessageDrivenChannelAdapter adapter =
 				new MqttPahoMessageDrivenChannelAdapter("tcp://m16.cloudmqtt.com:17245",
-						"web-service-app" + UUID.randomUUID().toString(), factory, "net/gateway/#");
+						"web-service-app" + UUID.randomUUID().toString(), factory, "net/serverGateway/#");
 		adapter.setCompletionTimeout(60000);
 		adapter.setConverter(new DefaultPahoMessageConverter());
 		adapter.setQos(1);
@@ -99,13 +97,13 @@ public class WebServiceApplication {
 							clientState = true;
 
 							//take action
-							gateway.send("ON", connectionId);
+							serverGateway.send("ON", connectionId);
 						} else if (clientState) {
 							//set state
 							clientState = false;
 
 							//take action
-							gateway.send("OFF", connectionId);
+							serverGateway.send("OFF", connectionId);
 						}
 					}
 				} catch (IOException e) {
