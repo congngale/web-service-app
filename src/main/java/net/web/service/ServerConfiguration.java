@@ -31,9 +31,7 @@ public class ServerConfiguration implements ApplicationListener<TcpConnectionEve
 
     @Bean
     public AbstractServerConnectionFactory serverFactory() {
-        System.out.println("serverFactory");
-        AbstractServerConnectionFactory connectionFactory = new TcpNetServerConnectionFactory(port);
-        return connectionFactory;
+        return new TcpNetServerConnectionFactory(port);
     }
 
     @Bean
@@ -47,14 +45,12 @@ public class ServerConfiguration implements ApplicationListener<TcpConnectionEve
 
     @Bean
     public MessageChannel fromTcp() {
-        System.out.println("creating fromTcp DirectChannel");
         return new DirectChannel();
     }
 
     // Inbound channel adapter. This receives the data from the client
     @Bean
     public TcpReceivingChannelAdapter inboundAdapter(AbstractServerConnectionFactory connectionFactory) {
-        System.out.println("Creating inbound adapter");
         TcpReceivingChannelAdapter inbound = new TcpReceivingChannelAdapter();
 
         inbound.setConnectionFactory(connectionFactory);
@@ -67,7 +63,6 @@ public class ServerConfiguration implements ApplicationListener<TcpConnectionEve
     @Bean
     @ServiceActivator(inputChannel="toTcp")
     public TcpSendingMessageHandler outboundAdapter(AbstractServerConnectionFactory connectionFactory) {
-        System.out.println("Creating outbound adapter");
         TcpSendingMessageHandler outbound = new TcpSendingMessageHandler();
         outbound.setConnectionFactory(connectionFactory);
         return outbound;

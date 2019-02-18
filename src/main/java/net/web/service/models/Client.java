@@ -7,13 +7,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "client")
 public class Client {
     @Id
-    private String id;
+    public String id;
 
-    private String ip;
+    public String ip;
 
-    private String name;
+    public String name;
 
-    private int threshold;
+    public int threshold;
 
     public Client() {
     }
@@ -23,9 +23,5 @@ public class Client {
         this.ip = ip;
         this.name = name;
         this.threshold = threshold;
-    }
-
-    public int getThreshold() {
-        return threshold;
     }
 }

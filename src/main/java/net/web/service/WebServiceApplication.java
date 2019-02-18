@@ -3,7 +3,6 @@ package net.web.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.web.service.models.ClientData;
 import net.web.service.repositories.ClientDataRepository;
-import net.web.service.repositories.ClientRepository;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -27,13 +26,10 @@ import java.util.UUID;
 public class WebServiceApplication {
 
 	@Autowired
-	private ClientRepository repository;
-
-	@Autowired
 	private ClientDataRepository dataRepository;
 
 	@Autowired
-	private ServerConfiguration.ServerGateway serverGateway;
+	private ServerConfiguration.ServerGateway gateway;
 
 	private ObjectMapper mapper =  new ObjectMapper();
 
@@ -45,10 +41,6 @@ public class WebServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(WebServiceApplication.class, args);
-//		Socket socket = SocketFactory.getDefault().createSocket("localhost", 2019);
-//		socket.getOutputStream().write("foo\r\n".getBytes());
-//		socket.close();
-//		Thread.sleep(1000);
 	}
 
 	@Bean
@@ -66,7 +58,7 @@ public class WebServiceApplication {
 
 		MqttPahoMessageDrivenChannelAdapter adapter =
 				new MqttPahoMessageDrivenChannelAdapter("tcp://m16.cloudmqtt.com:17245",
-						"web-service-app" + UUID.randomUUID().toString(), factory, "net/serverGateway/#");
+						"web-service-app" + UUID.randomUUID().toString(), factory, "net/gateway/#");
 		adapter.setCompletionTimeout(60000);
 		adapter.setConverter(new DefaultPahoMessageConverter());
 		adapter.setQos(1);
@@ -81,13 +73,15 @@ public class WebServiceApplication {
 
 			@Override
 			public void handleMessage(Message<?> message) throws MessagingException {
-				System.out.println(message.getPayload());
 				try {
 					//convert to client data
 					ClientData data = mapper.readValue(message.getPayload().toString(), ClientData.class);
 
 					//save data
 					dataRepository.insert(data);
+
+					System.out.println("Current threshold = " + threshold);
+					System.out.println("Current client state = " + clientState);
 
 					//check connection id
 					if (connectionId != null && !connectionId.isEmpty()) {
@@ -97,13 +91,13 @@ public class WebServiceApplication {
 							clientState = true;
 
 							//take action
-							serverGateway.send("ON", connectionId);
+							gateway.send("ON", connectionId);
 						} else if (clientState) {
 							//set state
 							clientState = false;
 
 							//take action
-							serverGateway.send("OFF", connectionId);
+							gateway.send("OFF", connectionId);
 						}
 					}
 				} catch (IOException e) {

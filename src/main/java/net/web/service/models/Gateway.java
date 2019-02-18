@@ -6,11 +6,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "gateway")
 public class Gateway {
     @Id
-    private String id;
+    public String id;
 
-    private String ip;
+    public String ip;
 
-    private String name;
+    public String name;
+
+    public Gateway() {
+
+    }
 
     public Gateway(String id, String name, String ip) {
         this.id = id;

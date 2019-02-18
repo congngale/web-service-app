@@ -4,9 +4,7 @@ import net.web.service.WebServiceApplication;
 import net.web.service.models.Gateway;
 import net.web.service.repositories.GatewayRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,23 +17,28 @@ public class GatewayController {
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public List<Gateway> all() {
-        List<Gateway> gateways = repository.findAll();
-
-        //print debug
-        for (Gateway g : gateways) {
-            System.out.println(g.toString());
-        }
-
-        return gateways;
+        return repository.findAll();
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.PUT)
-    public void add(Gateway gateway) {
-        repository.insert(gateway);
+    public void add(@RequestBody Gateway gateway) {
+        //check exist
+        if (repository.existsById(gateway.id)) {
+            //update gateway
+            repository.save(gateway);
+        } else {
+            //add new gateway
+            repository.insert(gateway);
+        }
     }
 
-    @RequestMapping(value = "/threshold", method = RequestMethod.POST)
-    public void setThreshold(int threshold) {
-        WebServiceApplication.threshold = threshold;
+    @RequestMapping(value = "/threshold/{level}", method = RequestMethod.POST)
+    public void setThreshold(@PathVariable int level) {
+        WebServiceApplication.threshold = level;
+    }
+
+    @RequestMapping(value = "/clean")
+    public void clean() {
+        repository.deleteAll();
     }
 }
