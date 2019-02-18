@@ -102,15 +102,15 @@ public class WebServiceApplication {
 					//check connection id
 					if (connectionId != null && !connectionId.isEmpty()) {
 						//check client
-						if (threshold < data.data && !clientState) {
+						if (threshold < data.data && clientState) {
 							//set state
-							clientState = true;
+							clientState = false;
 
 							//take action
 							gateway.send(mapper.writeValueAsString(new Action(SENDER, OFF)), connectionId);
-						} else if (threshold > data.data && clientState) {
+						} else if (threshold > data.data && !clientState) {
 							//set state
-							clientState = false;
+							clientState = true;
 
 							//take action
 							gateway.send(mapper.writeValueAsString(new Action(SENDER, ON)), connectionId);
