@@ -107,13 +107,13 @@ public class WebServiceApplication {
 							clientState = true;
 
 							//take action
-							gateway.send(mapper.writeValueAsString(new Action(SENDER, ON)), connectionId);
+							gateway.send(mapper.writeValueAsString(new Action(SENDER, OFF)), connectionId);
 						} else if (threshold > data.data && clientState) {
 							//set state
 							clientState = false;
 
 							//take action
-							gateway.send(mapper.writeValueAsString(new Action(SENDER, OFF)), connectionId);
+							gateway.send(mapper.writeValueAsString(new Action(SENDER, ON)), connectionId);
 						}
 					}
 				} catch (IOException e) {
