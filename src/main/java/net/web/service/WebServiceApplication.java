@@ -1,6 +1,7 @@
 package net.web.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.web.service.models.Action;
 import net.web.service.models.ClientData;
 import net.web.service.repositories.ClientDataRepository;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -43,6 +44,10 @@ public class WebServiceApplication {
 	public static String clientId;
 
 	public static String connectionId;
+
+	private static final int ON = 1;
+
+	private static final int OFF = 0;
 
 	private static final Logger logger = LoggerFactory.getLogger(WebServiceApplication.class);
 
@@ -88,6 +93,7 @@ public class WebServiceApplication {
 					//save data
 					dataRepository.insert(data);
 
+					logger.info("Luminance data = " + data.data);
 					logger.info("Current threshold = " + threshold);
 					logger.info("Current client state = " + clientState);
 
@@ -99,13 +105,13 @@ public class WebServiceApplication {
 							clientState = true;
 
 							//take action
-							gateway.send("ON", connectionId);
-						} else if (clientState) {
+							gateway.send(mapper.writeValueAsString(new Action("Web Service App", ON)), connectionId);
+						} else if (threshold > data.data && clientState) {
 							//set state
 							clientState = false;
 
 							//take action
-							gateway.send("OFF", connectionId);
+							gateway.send(mapper.writeValueAsString(new Action("Web Service App", OFF)), connectionId);
 						}
 					}
 				} catch (IOException e) {
